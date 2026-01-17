@@ -1,0 +1,11 @@
+program → stmt*  ; последовательность операторов
+
+stmt → ID '=' expr           ; присваивание
+     | ID '(' expr ')'  ; вывод
+     | 'if' expr stmt ('else' stmt)?  ; условие
+     | '{' stmt* '}'          ; блок операторов
+     | expr                   ; выражение само по себе как оператор
+
+expr   → term ((+ | -) term)*
+term   → factor ((* | /) factor)*
+factor → NUMBER | '(' expr ')' | ID
