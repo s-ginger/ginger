@@ -38,15 +38,32 @@ Ast* parse_factor(Parser* p) {
     return node;
 }
 
-Ast* parse_expr(Parser* p) {
+Ast* parse_term(Parser* p) {
     Ast* left = parse_factor(p);
+    if (!left) return NULL;
+
+    while (p->current.type == TOK_STAR || p->current.type == TOK_SLASH) {
+        char op = (p->current.type == TOK_STAR) ? '*' : '/';
+        parser_advance(p);
+
+        Ast* right = parse_factor(p);
+        if (!right) return NULL; 
+
+        left = new_bin_op_ast(left, right, op);
+    }
+    
+    return left;
+}
+
+Ast* parse_expr(Parser* p) {
+    Ast* left = parse_term(p);
     if (!left) return NULL;
 
     while (p->current.type == TOK_PLUS || p->current.type == TOK_MINUS) {
         char op = (p->current.type == TOK_PLUS) ? '+' : '-';
         parser_advance(p);
 
-        Ast* right = parse_factor(p);
+        Ast* right = parse_term(p);
         if (!right) return NULL; // ошибка синтаксиса
 
         left = new_bin_op_ast(left, right, op);

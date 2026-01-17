@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
     printf("t1: %.*s\n", (int)t1.length, t1.start); // 123
     printf("t2: %.*s\n", (int)t2.length, t2.start); // +
 
-    Lexer l = {"123 + (123 - x)", 0};
+    Lexer l = {"23 *123 + (123 - x)", 0};
 
     Parser* parser = malloc(sizeof(Parser));
     parser_init(parser, &l);
