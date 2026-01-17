@@ -23,6 +23,12 @@ Ast* parse_factor(Parser* p) {
         return ast;
     }
 
+    if (p->current.type == TOK_IDENT) {
+        Ast* ident_ast = new_ident_ast(p->current.start, p->current.length);
+        parser_advance(p);
+        return ident_ast;
+    }
+
     if (p->current.type != TOK_INT) {
         return NULL; // ошибка
     }
