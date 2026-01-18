@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
     Parser* parser = malloc(sizeof(Parser));
     parser_init(parser, &l);
 
-    Stmt *ast = parse_stmt(parser);
+    Stmt *stmt = parse_stmt(parser);
 
-    if (ast)
+    if (stmt)
     {
         printf("AST is completed\n");
     }

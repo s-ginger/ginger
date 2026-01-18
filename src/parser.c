@@ -93,13 +93,34 @@ static Stmt* parse_var_stmt(Parser* p) {
     return new_var_stmt(name, len, value);
 }
 
+static Stmt* parse_const_stmt(Parser* p) {
+    parser_advance(p);
 
+    if (p->current.type != TOK_IDENT) 
+        return NULL;
+
+    const char* name = p->current.start;
+    size_t len = p->current.length;
+    parser_advance(p); 
+
+    Ast* value = NULL;
+
+    if (p->current.type == TOK_ASSIGN) {
+        parser_advance(p);
+        value = parse_expr(p);
+        if (!value) return NULL;
+    }
+
+    return new_const_stmt(name, len, value);
+}
 
 Stmt* parse_stmt(Parser* p) {
     Stmt* stmt = NULL;
 
     if (p->current.type == TOK_VAR) {
         stmt = parse_var_stmt(p); 
+    } else if (p->current.type == TOK_CONST) {
+        stmt = parse_const_stmt(p);
     } else {
         stmt = new_expr_stmt(parse_expr(p));
     }
