@@ -72,11 +72,47 @@ Ast* parse_expr(Parser* p) {
     return left;
 }
 
-Ast* parse_stmt(Parser* p) {
-    if (p->current.type == TOK_ASSIGN) {
+static Stmt* parse_var_stmt(Parser* p) {
+    parser_advance(p);
 
+    if (p->current.type != TOK_IDENT) 
+        return NULL;
+
+    const char* name = p->current.start;
+    size_t len = p->current.length;
+    parser_advance(p); 
+
+    Ast* value = NULL;
+
+    if (p->current.type == TOK_ASSIGN) {
+        parser_advance(p);
+        value = parse_expr(p);
+        if (!value) return NULL;
     }
 
+    return new_var_stmt(name, len, value);
+}
+
+
+
+Stmt* parse_stmt(Parser* p) {
+    Stmt* stmt = NULL;
+
+    if (p->current.type == TOK_VAR) {
+        stmt = parse_var_stmt(p); 
+    } else {
+        stmt = new_expr_stmt(parse_expr(p));
+    }
+
+    if (!stmt) return NULL;
+
+    // обязательная точка с запятой
+    if (p->current.type != TOK_SEMICOLON)
+        return NULL; // ошибка: ожидался ;
+
+    parser_advance(p); // съели ;
+
+    return stmt;
 }
 
 

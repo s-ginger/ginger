@@ -15,5 +15,6 @@ Token parser_advance(Parser *p);
 Ast* parse_factor(Parser* p);
 Ast* parse_term(Parser* p);
 Ast* parse_expr(Parser* p);
+Stmt* parse_stmt(Parser* p);
 
 #endif

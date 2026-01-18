@@ -69,7 +69,7 @@ typedef struct Stmt
         } expr_stmt;
 
         struct {
-            Stmt** stmts;
+            struct Stmt** stmts;
             size_t count;
         } block;
     };

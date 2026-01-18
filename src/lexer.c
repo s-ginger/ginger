@@ -60,7 +60,7 @@ Token lexer_next(Lexer *l)
         size_t len = l->pos - start;
         const char *text = l->src + start;
 
-        if (len == 3 && strncmp(text, "var", 2) == 0)
+        if (len == 3 && strncmp(text, "var", 3) == 0)
             return new_token(TOK_VAR, text, len);
 
         if (len == 5 && strncmp(text, "const", 5) == 0)
