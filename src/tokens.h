@@ -10,9 +10,19 @@ typedef enum {
     TOK_MINUS,      // -
     TOK_STAR,       // *
     TOK_SLASH,      // /
+    TOK_ASSIGN,
     
     TOK_LPAREN,     // (
     TOK_RPAREN,     // )
+
+    TOK_LBRACE,     // {
+    TOK_RBRACE,     // }
+    
+    TOK_COMMA,      // ,
+    TOK_SEMICOLON,  // ;
+
+    TOK_VAR,        // var
+    TOK_CONST,      // const
 
     TOK_EOF,
     TOK_UNKNOWN

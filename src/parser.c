@@ -72,4 +72,11 @@ Ast* parse_expr(Parser* p) {
     return left;
 }
 
+Ast* parse_stmt(Parser* p) {
+    if (p->current.type == TOK_ASSIGN) {
+
+    }
+
+}
+
 
