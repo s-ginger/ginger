@@ -1,5 +1,6 @@
 #ifndef TOKENS_H
 #define TOKENS_H
+#include "core.h"
 
 typedef enum {
 
@@ -19,10 +20,16 @@ typedef enum {
     TOK_RBRACE, // }
 
     TOK_COMMA,     // ,
+    TOK_COLON,     // :
+    TOK_COLONCOLON, // ::
     TOK_SEMICOLON, // ;
+    TOK_SHORTASSIGN, // :=
 
-    TOK_VAR,   // var
-    TOK_CONST, // const
+    TOK_VAR,   
+    TOK_CONST, 
+    TOK_PACKAGE,
+    TOK_IMPORT, 
+    TOK_PROC,   
 
     TOK_NEWLINE,
     TOK_EOF,
@@ -33,9 +40,9 @@ typedef enum {
 typedef struct Token {
     TokenType type;
     const char *start;
-    size_t length;
+    usize length;
 } Token;
 
-Token new_token(TokenType type, const char *start, size_t length);
+Token new_token(TokenType type, const char *start, usize length);
 
 #endif

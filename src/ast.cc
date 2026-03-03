@@ -17,7 +17,7 @@ Ast *new_bin_op_ast(Ast *left, Ast *right, char op) {
     return ast_node;
 }
 
-Ast *new_int_ast(int value) {
+Ast *new_int_ast(i32 value) {
     Ast *ast_node = cast<Ast *>(malloc(sizeof(Ast)));
     if (!ast_node)
         return NULL;
@@ -28,7 +28,7 @@ Ast *new_int_ast(int value) {
     return ast_node;
 }
 
-Ast *new_ident_ast(const char *name, size_t length) {
+Ast *new_ident_ast(const char *name, usize length) {
     Ast *node = cast<Ast *>(malloc(sizeof(Ast)));
     if (!node)
         return NULL;
@@ -67,7 +67,7 @@ void free_ast(Ast *ast) {
     free(ast);
 }
 
-Stmt *new_var_stmt(const char *name, size_t len, Ast *value) {
+Stmt *new_var_stmt(const char *name, usize len, Ast *value) {
     Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
     stmt->type = STMT_VAR;
     stmt->var_decl.name = name;
@@ -76,7 +76,7 @@ Stmt *new_var_stmt(const char *name, size_t len, Ast *value) {
     return stmt;
 }
 
-Stmt *new_const_stmt(const char *name, size_t len, Ast *value) {
+Stmt *new_const_stmt(const char *name, usize len, Ast *value) {
     Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
     stmt->type = STMT_CONST;
     stmt->const_decl.name = name;
@@ -85,7 +85,7 @@ Stmt *new_const_stmt(const char *name, size_t len, Ast *value) {
     return stmt;
 }
 
-Stmt *new_assign_stmt(const char *name, size_t len, Ast *value) {
+Stmt *new_assign_stmt(const char *name, usize len, Ast *value) {
     Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
     stmt->type = STMT_ASSIGN;
     stmt->assign.name = name;
@@ -101,7 +101,7 @@ Stmt *new_expr_stmt(Ast *expr) {
     return s;
 }
 
-Stmt *new_block_stmt(Stmt **stmts, size_t count) {
+Stmt *new_block_stmt(Stmt **stmts, usize count) {
     Stmt *s = cast<Stmt *>(malloc(sizeof(Stmt)));
     s->type = STMT_BLOCK;
     s->block.stmts = stmts;
@@ -131,7 +131,7 @@ void free_stmt(Stmt *stmt) {
         break;
 
     case STMT_BLOCK:
-        for (size_t i = 0; i < stmt->block.count; i++) {
+        for (usize i = 0; i < stmt->block.count; i++) {
             free_stmt(stmt->block.stmts[i]);
         }
         free(stmt->block.stmts);
@@ -141,12 +141,12 @@ void free_stmt(Stmt *stmt) {
     free(stmt);
 }
 
-static void print_indent(int indent) {
+static void print_indent(i32 indent) {
     for (int i = 0; i < indent; i++)
         printf("  ");
 }
 
-void print_ast(Ast *ast, int indent) {
+void print_ast(Ast *ast, i32 indent) {
     if (!ast)
         return;
 
@@ -158,7 +158,7 @@ void print_ast(Ast *ast, int indent) {
         break;
 
     case AST_IDENT:
-        printf("Ident(%.*s)\n", (int)ast->ident.length, ast->ident.name);
+        printf("Ident(%.*s)\n", (i32)ast->ident.length, ast->ident.name);
         break;
 
     case AST_BINOP:
@@ -170,7 +170,7 @@ void print_ast(Ast *ast, int indent) {
     }
 }
 
-void print_stmt(Stmt *stmt, int indent) {
+void print_stmt(Stmt *stmt, i32 indent) {
     if (!stmt)
         return;
 
@@ -178,17 +178,17 @@ void print_stmt(Stmt *stmt, int indent) {
 
     switch (stmt->type) {
     case STMT_VAR:
-        printf("VarDecl(%.*s)\n", (int)stmt->var_decl.length, stmt->var_decl.name);
+        printf("VarDecl(%.*s)\n", (i32)stmt->var_decl.length, stmt->var_decl.name);
         print_ast(stmt->var_decl.value, indent + 1);
         break;
 
     case STMT_CONST:
-        printf("ConstDecl(%.*s)\n", (int)stmt->const_decl.length, stmt->const_decl.name);
+        printf("ConstDecl(%.*s)\n", (i32)stmt->const_decl.length, stmt->const_decl.name);
         print_ast(stmt->const_decl.value, indent + 1);
         break;
 
     case STMT_ASSIGN:
-        printf("Assign(%.*s)\n", (int)stmt->assign.length, stmt->assign.name);
+        printf("Assign(%.*s)\n", (i32)stmt->assign.length, stmt->assign.name);
         print_ast(stmt->assign.value, indent + 1);
         break;
 
@@ -199,7 +199,7 @@ void print_stmt(Stmt *stmt, int indent) {
 
     case STMT_BLOCK:
         printf("Block\n");
-        for (size_t i = 0; i < stmt->block.count; i++) {
+        for (usize i = 0; i < stmt->block.count; i++) {
             print_stmt(stmt->block.stmts[i], indent + 1);
         }
         break;

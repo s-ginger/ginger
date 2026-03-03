@@ -1,5 +1,5 @@
-#include "core.h"
 #include "lexer.h"
+#include "core.h"
 #include <ctype.h> // для isspace
 #include <string.h>
 
@@ -13,19 +13,16 @@ char lexer_peek(Lexer *l) {
     return l->src[l->pos];
 }
 
-static int is_digit(char c) { return c >= '0' && c <= '9'; }
+static i32 is_digit(char c) { return c >= '0' && c <= '9'; }
 
-static int is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
+static i32 is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
 
-static bool is_space(char c) {
-    return (c != '\n') && isspace(cast<u32>(c));
-}
-
+static b8 is_space(char c) { return (c != '\n') && isspace(cast<u32>(c)); }
 
 // вернуть следующий токен
 Token lexer_next(Lexer *l) {
     // Пропускаем пробелы
-    while (lexer_peek(l) != '\0' && is_space(cast<u32>(lexer_peek(l)))) {
+    while (lexer_peek(l) != '\0' && is_space(cast<i8>(lexer_peek(l)))) {
         lexer_advance(l);
     }
 
@@ -80,7 +77,21 @@ Token lexer_next(Lexer *l) {
         return new_token(TOK_LBRACE, l->src + start, 1);
     case '}':
         return new_token(TOK_RBRACE, l->src + start, 1);
+    case ':': {
+        char next = lexer_peek(l);
 
+        if (next == '=') {
+            lexer_advance(l);
+            return new_token(TOK_SHORTASSIGN, l->src + start, 2); // :=
+        }
+
+        if (next == ':') {
+            lexer_advance(l);
+            return new_token(TOK_COLONCOLON, l->src + start, 2); // ::
+        }
+
+        return new_token(TOK_COLON, l->src + start, 1); // :
+    }
     case '=':
         return new_token(TOK_ASSIGN, l->src + start, 1);
     case ';':

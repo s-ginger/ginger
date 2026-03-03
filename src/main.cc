@@ -1,4 +1,3 @@
-#include "core.h"
 #include "lexer.h"
 #include "parser.h"
 #include "tokens.h"
@@ -15,15 +14,18 @@ int main() {
     Token t2 = new_token(TOK_PLUS, src + 4, 1);
 
     // печатаем токены
-    printf("t1: %.*s\n", (int)t1.length, t1.start); // 123
-    printf("t2: %.*s\n", (int)t2.length, t2.start); // +
+    printf("t1: %.*s\n", (i32)t1.length, t1.start); // 123
+    printf("t2: %.*s\n", (i32)t2.length, t2.start); // +
 
-    Lexer l = {"var x = 12 + 23\n", 0};
+    Lexer l = {"x = 12 + 23\n", 0};
 
     Parser *parser = cast<Parser *>(malloc(sizeof(Parser)));
     parser_init(parser, &l);
 
     Stmt *stmt = parse_stmt(parser);
+
+    
+    
 
     if (stmt) {
         printf("AST is completed\n");

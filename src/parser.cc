@@ -1,3 +1,4 @@
+#include "core.h"
 #include "parser.h"
 #include "ast.h"
 #include "tokens.h"
@@ -6,10 +7,12 @@
 void parser_init(Parser *p, Lexer *lexer) {
     p->lexer = lexer;
     p->current = lexer_next(lexer);
+    p->next = lexer_next(lexer);
 }
 
 Token parser_advance(Parser *p) {
-    p->current = lexer_next(p->lexer);
+    p->current = p->next;
+    p->next = lexer_next(p->lexer);
     return p->current;
 }
 
@@ -120,6 +123,19 @@ static Stmt *parse_const_stmt(Parser *p) {
     return new_const_stmt(name, len, value);
 }
 
+static Stmt *parse_assign(Parser *p) {
+    Ast *ident = parse_factor(p);
+
+    if (p->current.type != TOK_ASSIGN)
+        return NULL;
+    else
+        parser_advance(p);
+
+    Ast *expr = parse_expr(p);
+
+    return new_assign_stmt(ident->ident.name, ident->ident.length, expr);
+}
+
 Stmt *parse_stmt(Parser *p) {
     Stmt *stmt = NULL;
 
@@ -127,7 +143,11 @@ Stmt *parse_stmt(Parser *p) {
         stmt = parse_var_stmt(p);
     } else if (p->current.type == TOK_CONST) {
         stmt = parse_const_stmt(p);
-    } else if (p->current.type == TOK_LBRACE) {
+    } else if (p->current.type == TOK_IDENT) {
+        if (p->next.type == TOK_ASSIGN)
+            stmt = parse_assign(p);
+        
+        
 
     } else {
         stmt = new_expr_stmt(parse_expr(p));

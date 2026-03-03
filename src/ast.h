@@ -1,15 +1,16 @@
 #ifndef AST_H
 #define AST_H
+#include "core.h"
 
 typedef enum { AST_IDENT, AST_INT, AST_BINOP } AstType;
 
 typedef struct Ast {
     AstType type;
     union {
-        int value;
+        i32 value;
         struct {
             char *name;
-            size_t length;
+            usize length;
         } ident;
         struct {
             struct Ast *l;
@@ -20,8 +21,8 @@ typedef struct Ast {
 } Ast;
 
 Ast *new_bin_op_ast(Ast *left, Ast *right, char op);
-Ast *new_int_ast(int value);
-Ast *new_ident_ast(const char *name, size_t lenght);
+Ast *new_int_ast(i32 value);
+Ast *new_ident_ast(const char *name, usize lenght);
 
 typedef enum {
     STMT_VAR,    // var x = expr;
@@ -36,19 +37,19 @@ typedef struct Stmt {
     union {
         struct {
             const char *name;
-            size_t length;
+            usize length;
             Ast *value;
         } var_decl;
 
         struct {
             const char *name;
-            size_t length;
+            usize length;
             Ast *value;
         } const_decl;
 
         struct {
             const char *name;
-            size_t length;
+            usize length;
             Ast *value;
         } assign;
 
@@ -58,19 +59,19 @@ typedef struct Stmt {
 
         struct {
             struct Stmt **stmts;
-            size_t count;
+            usize count;
         } block;
     };
 } Stmt;
 
-Stmt *new_var_stmt(const char *name, size_t len, Ast *value);
-Stmt *new_const_stmt(const char *name, size_t len, Ast *value);
-Stmt *new_assign_stmt(const char *name, size_t len, Ast *value);
+Stmt *new_var_stmt(const char *name, usize len, Ast *value);
+Stmt *new_const_stmt(const char *name, usize len, Ast *value);
+Stmt *new_assign_stmt(const char *name, usize len, Ast *value);
 Stmt *new_expr_stmt(Ast *expr);
-Stmt *new_block_stmt(Stmt **stmts, size_t count);
+Stmt *new_block_stmt(Stmt **stmts, usize count);
 
-void print_ast(Ast *ast, int indent);
-void print_stmt(Stmt *stmt, int indent);
+void print_ast(Ast *ast, i32 indent);
+void print_stmt(Stmt *stmt, i32 indent);
 
 void free_ast(Ast *ast);
 void free_stmt(Stmt *stmt);

@@ -1,6 +1,11 @@
+package main
 
 
-a: int
-a = 3
-echo a
+
+N :: 12
+
+
+
+var a = 12
+const b = 12
 
