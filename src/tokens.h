@@ -24,6 +24,7 @@ typedef enum {
     TOK_VAR,   // var
     TOK_CONST, // const
 
+    TOK_NEWLINE,
     TOK_EOF,
     TOK_UNKNOWN
 

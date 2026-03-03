@@ -18,7 +18,7 @@ int main() {
     printf("t1: %.*s\n", (int)t1.length, t1.start); // 123
     printf("t2: %.*s\n", (int)t2.length, t2.start); // +
 
-    Lexer l = {"var x = 12 + \n 23;", 0};
+    Lexer l = {"var x = 12 + 23\n", 0};
 
     Parser *parser = cast<Parser *>(malloc(sizeof(Parser)));
     parser_init(parser, &l);

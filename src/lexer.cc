@@ -1,3 +1,4 @@
+#include "core.h"
 #include "lexer.h"
 #include <ctype.h> // для isspace
 #include <string.h>
@@ -16,10 +17,15 @@ static int is_digit(char c) { return c >= '0' && c <= '9'; }
 
 static int is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
 
+static bool is_space(char c) {
+    return (c != '\n') && isspace(cast<u32>(c));
+}
+
+
 // вернуть следующий токен
 Token lexer_next(Lexer *l) {
     // Пропускаем пробелы
-    while (lexer_peek(l) != '\0' && isspace((unsigned char)lexer_peek(l))) {
+    while (lexer_peek(l) != '\0' && is_space(cast<u32>(lexer_peek(l)))) {
         lexer_advance(l);
     }
 
@@ -79,7 +85,8 @@ Token lexer_next(Lexer *l) {
         return new_token(TOK_ASSIGN, l->src + start, 1);
     case ';':
         return new_token(TOK_SEMICOLON, l->src + start, 1);
-
+    case '\n':
+        return new_token(TOK_NEWLINE, l->src + start, 1);
     default:
         return new_token(TOK_UNKNOWN, l->src + start, 1);
     }

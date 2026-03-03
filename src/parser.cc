@@ -136,7 +136,7 @@ Stmt *parse_stmt(Parser *p) {
     if (!stmt)
         return NULL;
 
-    if (p->current.type != TOK_SEMICOLON)
+    if (p->current.type != TOK_NEWLINE)
         return NULL; // ошибка: ожидался ;
 
     parser_advance(p); // съели ;
