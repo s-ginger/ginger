@@ -1,20 +1,6 @@
-package name
-
-import "core:math"
-import "base:fs"
 
 
+a: int
+a = 3
+echo a
 
-fn main() {
-	var (
-		a int
-		b int
-		c int
-	)
-
-	a := 10
-	b := 12
-	c := a + b
-
-	println(c)
-}

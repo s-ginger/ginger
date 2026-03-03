@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 
-Token new_token(int type, const char* start, size_t length) {
+Token new_token(TokenType type, const char* start, size_t length) {
     Token t;
     t.type = type;
     t.start = start;

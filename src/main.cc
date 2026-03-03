@@ -1,12 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "tokens.h"
+#include "core.h"
 #include "lexer.h"
 #include "parser.h"
+#include "tokens.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-
-int main(int argc, char const *argv[])
-{
+int main() {
     const char *src = "123 + 456";
 
     // токен числа "123"
@@ -19,21 +18,21 @@ int main(int argc, char const *argv[])
     printf("t1: %.*s\n", (int)t1.length, t1.start); // 123
     printf("t2: %.*s\n", (int)t2.length, t2.start); // +
 
-    Lexer l = {"var x = 12 + 23;", 0};
+    Lexer l = {"var x = 12 + \n 23;", 0};
 
-    Parser* parser = malloc(sizeof(Parser));
+    Parser *parser = cast<Parser *>(malloc(sizeof(Parser)));
     parser_init(parser, &l);
 
     Stmt *stmt = parse_stmt(parser);
 
-    if (stmt)
-    {
+    if (stmt) {
         printf("AST is completed\n");
-    }
-    else
-    {
+        print_stmt(stmt, 0);
+    } else {
         printf("Error.\n");
     }
+
+    free_stmt(stmt);
 
     return 0;
 }

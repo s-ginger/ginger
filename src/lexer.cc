@@ -3,48 +3,34 @@
 #include <string.h>
 
 // advance на 1 символ
-char lexer_advance(Lexer *l)
-{
-    return l->src[l->pos++];
-}
+char lexer_advance(Lexer *l) { return l->src[l->pos++]; }
 
 // посмотреть следующий символ
-char lexer_peek(Lexer *l)
-{
+char lexer_peek(Lexer *l) {
     if (l->src[l->pos] == '\0')
         return '\0';
     return l->src[l->pos];
 }
 
-static int is_digit(char c)
-{
-    return c >= '0' && c <= '9';
-}
+static int is_digit(char c) { return c >= '0' && c <= '9'; }
 
-static int is_letter(char c)
-{
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-}
+static int is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
 
 // вернуть следующий токен
-Token lexer_next(Lexer *l)
-{
+Token lexer_next(Lexer *l) {
     // Пропускаем пробелы
-    while (lexer_peek(l) != '\0' && isspace((unsigned char)lexer_peek(l)))
-    {
+    while (lexer_peek(l) != '\0' && isspace((unsigned char)lexer_peek(l))) {
         lexer_advance(l);
     }
 
     size_t start = l->pos;
     char c = lexer_advance(l);
 
-    if (c == '\0')
-    {
+    if (c == '\0') {
         return new_token(TOK_EOF, l->src + start, 0); // длина 0 для EOF
     }
 
-    if (is_digit(c))
-    {
+    if (is_digit(c)) {
         while (is_digit(lexer_peek(l)))
             lexer_advance(l);
         size_t len = l->pos - start;
@@ -52,8 +38,7 @@ Token lexer_next(Lexer *l)
     }
 
     // Идентификаторы
-    if (is_letter(c))
-    {
+    if (is_letter(c)) {
         while (is_letter(lexer_peek(l)) || is_digit(lexer_peek(l)))
             lexer_advance(l);
 
@@ -70,8 +55,7 @@ Token lexer_next(Lexer *l)
     }
 
     // Операторы и символы
-    switch (c)
-    {
+    switch (c) {
     case '+':
         return new_token(TOK_PLUS, l->src + start, 1);
     case '-':
