@@ -10,9 +10,9 @@ Ast *new_bin_op_ast(Ast *left, Ast *right, char op) {
     return NULL;
 
   ast_node->type = AST_BINOP;
-  ast_node->l = left;
-  ast_node->r = right;
-  ast_node->op = op;
+  ast_node->bin_op.l = left;
+  ast_node->bin_op.r = right;
+  ast_node->bin_op.op = op;
 
   return ast_node;
 }
@@ -59,8 +59,8 @@ void free_ast(Ast *ast) {
     break;
 
   case AST_BINOP:
-    free_ast(ast->l);
-    free_ast(ast->r);
+    free_ast(ast->bin_op.l);
+    free_ast(ast->bin_op.r);
     break;
   }
 
@@ -170,10 +170,10 @@ void print_ast(Ast *ast, i32 indent) {
     break;
 
   case AST_BINOP:
-    printf("BinOp('%c')\n", ast->op);
+    printf("BinOp('%c')\n", ast->bin_op.op);
 
-    print_ast(ast->l, indent + 1);
-    print_ast(ast->r, indent + 1);
+    print_ast(ast->bin_op.l, indent + 1);
+    print_ast(ast->bin_op.r, indent + 1);
     break;
   }
 }

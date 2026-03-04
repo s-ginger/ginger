@@ -182,3 +182,7 @@ Stmt *parse_stmt(Parser *p) {
 
   return stmt;
 }
+
+Stmt **parse_program(Parser *p) {
+    return nullptr;
+}

@@ -16,7 +16,7 @@ typedef struct Ast {
       struct Ast *l;
       struct Ast *r;
       char op;
-    };
+    } bin_op;
   };
 } Ast;
 

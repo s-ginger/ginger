@@ -57,7 +57,7 @@ Token lexer_next(Lexer *l) {
       return new_token(TOK_CONST, text, len);
 
     if (len == 7 && strncmp(text, "package", 7) == 0)
-        return new_token(TOK_PACKAGE, text, len);
+      return new_token(TOK_PACKAGE, text, len);
 
     return new_token(TOK_IDENT, text, len);
   }
