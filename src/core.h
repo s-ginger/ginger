@@ -30,11 +30,14 @@ typedef u8 byte;
 typedef i32 b32; // bool 32
 typedef u8 b8;   // bool 8
 
-template <typename T, typename U> inline T cast(U value) { return static_cast<T>(value); }
+template <typename T, typename U> inline T cast(U value) {
+  return static_cast<T>(value);
+}
 
 template <typename T> constexpr usize size_of() { return sizeof(T); }
 
-template <typename T> constexpr usize count_of(T &arr) { return sizeof(arr) / sizeof(arr[0]); }
-
+template <typename T> constexpr usize count_of(T &arr) {
+  return sizeof(arr) / sizeof(arr[0]);
+}
 
 #endif

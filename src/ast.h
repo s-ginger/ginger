@@ -5,19 +5,19 @@
 typedef enum { AST_IDENT, AST_INT, AST_BINOP } AstType;
 
 typedef struct Ast {
-    AstType type;
-    union {
-        i32 value;
-        struct {
-            char *name;
-            usize length;
-        } ident;
-        struct {
-            struct Ast *l;
-            struct Ast *r;
-            char op;
-        };
+  AstType type;
+  union {
+    i32 value;
+    struct {
+      char *name;
+      usize length;
+    } ident;
+    struct {
+      struct Ast *l;
+      struct Ast *r;
+      char op;
     };
+  };
 } Ast;
 
 Ast *new_bin_op_ast(Ast *left, Ast *right, char op);
@@ -25,43 +25,57 @@ Ast *new_int_ast(i32 value);
 Ast *new_ident_ast(const char *name, usize lenght);
 
 typedef enum {
-    STMT_VAR,    // var x = expr;
-    STMT_CONST,  // const x = expr;
-    STMT_EXPR,   // expr;
-    STMT_ASSIGN, // x = expr;
-    STMT_BLOCK   // { stmt* }
+  STMT_VAR,    // var x = expr;
+  STMT_CONST,  // const x = expr;
+  STMT_EXPR,   // expr;
+  STMT_ASSIGN, // x = expr;
+  STMT_BLOCK,  // { stmt* }
+
+  STMT_IMPORT,
+  STMT_PACKAGE,
+
 } StmtType;
 
 typedef struct Stmt {
-    StmtType type;
-    union {
-        struct {
-            const char *name;
-            usize length;
-            Ast *value;
-        } var_decl;
+  StmtType type;
+  union {
+    struct {
+      const char *name;
+      usize length;
+      Ast *value;
+    } var_decl;
 
-        struct {
-            const char *name;
-            usize length;
-            Ast *value;
-        } const_decl;
+    struct {
+      const char *name;
+      usize length;
+      Ast *value;
+    } const_decl;
 
-        struct {
-            const char *name;
-            usize length;
-            Ast *value;
-        } assign;
+    struct {
+      const char *name;
+      usize length;
+      Ast *value;
+    } assign;
 
-        struct {
-            Ast *expr;
-        } expr_stmt;
+    struct {
+      Ast *expr;
+    } expr_stmt;
 
-        struct {
-            struct Stmt **stmts;
-            usize count;
-        } block;
-    };
+    struct {
+      const char *name;
+      usize lenght;
+    } package_decl;
+
+    struct {
+      const char *name;
+      usize lenght;
+    } import_decl;
+
+    struct {
+      struct Stmt **stmts;
+      usize count;
+    } block;
+  };
 } Stmt;
 
 Stmt *new_var_stmt(const char *name, usize len, Ast *value);

@@ -1,11 +1,11 @@
 #ifndef LEXER_H
 #define LEXER_H
-#include "tokens.h"
 #include "core.h"
+#include "tokens.h"
 
 typedef struct Lexer {
-    const char *src;
-    i32 pos;
+  const char *src;
+  i32 pos;
 } Lexer;
 
 char lexer_advance(Lexer *l);
