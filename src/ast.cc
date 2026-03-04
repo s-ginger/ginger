@@ -85,6 +85,14 @@ Stmt *new_const_stmt(const char *name, usize len, Ast *value) {
   return stmt;
 }
 
+Stmt *new_package_stmt(const char *name, usize len) {
+  Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
+  stmt->type = STMT_PACKAGE;
+  stmt->package_decl.name = name;
+  stmt->package_decl.lenght = len;
+  return stmt;
+}
+
 Stmt *new_assign_stmt(const char *name, usize len, Ast *value) {
   Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
   stmt->type = STMT_ASSIGN;
@@ -191,6 +199,10 @@ void print_stmt(Stmt *stmt, i32 indent) {
   case STMT_ASSIGN:
     printf("Assign(%.*s)\n", (i32)stmt->assign.length, stmt->assign.name);
     print_ast(stmt->assign.value, indent + 1);
+    break;
+
+  case STMT_PACKAGE:
+    printf("Package(%.*s)\n", (i32)stmt->package_decl.lenght, stmt->package_decl.name);
     break;
 
   case STMT_EXPR:

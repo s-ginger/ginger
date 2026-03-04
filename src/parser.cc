@@ -136,6 +136,26 @@ static Stmt *parse_assign(Parser *p) {
   return new_assign_stmt(ident->ident.name, ident->ident.length, expr);
 }
 
+static Stmt *parse_package(Parser *p) {
+  // 1. Пропускаем 'package', который нас сюда привел
+  parser_advance(p); 
+
+  // 2. Теперь мы ожидаем идентификатор (имя пакета)
+  if (p->current.type != TOK_IDENT) {
+    return NULL; // Ошибка: после package должно быть имя
+  }
+
+  // 3. Берем данные токена напрямую
+  const char *name = p->current.start;
+  usize len = p->current.length;
+
+  // 4. Двигаемся дальше
+  parser_advance(p); 
+
+  // 5. Создаем стейтмент (не забудь про передачу Арены в new_...)
+  return new_package_stmt(name, len);
+}
+
 Stmt *parse_stmt(Parser *p) {
   Stmt *stmt = NULL;
 
@@ -147,7 +167,7 @@ Stmt *parse_stmt(Parser *p) {
     if (p->next.type == TOK_ASSIGN)
       stmt = parse_assign(p);
   } else if (p->current.type == TOK_PACKAGE) {
-    stmt;
+    stmt = parse_package(p);
   } else {
     stmt = new_expr_stmt(parse_expr(p));
   }
