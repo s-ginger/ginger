@@ -25,8 +25,8 @@ typedef enum {
     TOK_SEMICOLON, // ;
     TOK_SHORTASSIGN, // :=
 
-    TOK_VAR,   
-    TOK_CONST, 
+    TOK_VAR,
+    TOK_CONST,
     TOK_PACKAGE,
     TOK_IMPORT, 
     TOK_PROC,   
