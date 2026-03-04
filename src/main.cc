@@ -7,10 +7,10 @@
 int main() {
   Lexer l = {"x = 12 + 23\n", 0};
 
-  Parser *parser = cast<Parser *>(malloc(sizeof(Parser)));
-  parser_init(parser, &l);
+  Parser parser;
+  parser_init(&parser, &l);
 
-  Stmt *stmt = parse_stmt(parser);
+  Stmt *stmt = parse_stmt(&parser);
 
   if (stmt) {
     printf("AST is completed\n");
