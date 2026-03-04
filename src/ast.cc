@@ -45,6 +45,26 @@ Ast *new_ident_ast(const char *name, usize length) {
   return node;
 }
 
+Ast *new_string_ast(const char *name, usize length) {
+  Ast *node = cast<Ast *>(malloc(sizeof(Ast)));
+  if (!node)
+    return NULL;
+
+  node->type = AST_STR;
+  node->string_literal.value = cast<char *>(malloc(length + 1)); // выделяем память
+  if (!node->string_literal.value) {
+    free(node);
+    return NULL;
+  }
+
+  memcpy(node->string_literal.value, name, length); // копируем содержимое
+  node->string_literal.value[length] = '\0';        // добавляем нулевой терминатор
+  node->string_literal.length = length;
+  return node;
+}
+
+
+
 void free_ast(Ast *ast) {
   if (!ast)
     return;
@@ -165,6 +185,9 @@ void print_ast(Ast *ast, i32 indent) {
     printf("Int(%d)\n", ast->value);
     break;
 
+  case AST_STR:
+    printf("String(%.*s)\n", (i32)ast->string_literal.length, ast->string_literal.value);
+    break;
   case AST_IDENT:
     printf("Ident(%.*s)\n", (i32)ast->ident.length, ast->ident.name);
     break;

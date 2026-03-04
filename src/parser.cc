@@ -32,6 +32,13 @@ Ast *parse_factor(Parser *p) {
     return ident_ast;
   }
 
+  if (p->current.type == TOK_STRING) {
+    Ast *string_literal =
+        new_string_ast(p->current.start + 1, p->current.length - 2);
+    parser_advance(p);
+    return string_literal;
+  }
+
   if (p->current.type != TOK_INT) {
     return NULL; // ошибка
   }
@@ -138,7 +145,7 @@ static Stmt *parse_assign(Parser *p) {
 
 static Stmt *parse_package(Parser *p) {
   // 1. Пропускаем 'package', который нас сюда привел
-  parser_advance(p); 
+  parser_advance(p);
 
   // 2. Теперь мы ожидаем идентификатор (имя пакета)
   if (p->current.type != TOK_IDENT) {
@@ -150,7 +157,7 @@ static Stmt *parse_package(Parser *p) {
   usize len = p->current.length;
 
   // 4. Двигаемся дальше
-  parser_advance(p); 
+  parser_advance(p);
 
   // 5. Создаем стейтмент (не забудь про передачу Арены в new_...)
   return new_package_stmt(name, len);
@@ -166,6 +173,8 @@ Stmt *parse_stmt(Parser *p) {
   } else if (p->current.type == TOK_IDENT) {
     if (p->next.type == TOK_ASSIGN)
       stmt = parse_assign(p);
+    else
+      stmt = new_expr_stmt(parse_expr(p));
   } else if (p->current.type == TOK_PACKAGE) {
     stmt = parse_package(p);
   } else {
@@ -175,14 +184,12 @@ Stmt *parse_stmt(Parser *p) {
   if (!stmt)
     return NULL;
 
-  if (p->current.type != TOK_NEWLINE)
-    return NULL; // ошибка: ожидался ;
+  if (p->current.type != TOK_NEWLINE && p->current.type != TOK_EOF)
+    return NULL; // ошибка: ожидался \n
 
   parser_advance(p); // съели ;
 
   return stmt;
 }
 
-Stmt **parse_program(Parser *p) {
-    return nullptr;
-}
+Stmt **parse_program(Parser *p) { return nullptr; }

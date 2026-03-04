@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 int main() {
-  Lexer l = {"package main\n", 0};
+  Lexer l = {" a ", 0};
 
   Parser parser;
   parser_init(&parser, &l);

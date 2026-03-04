@@ -2,12 +2,16 @@
 #define AST_H
 #include "core.h"
 
-typedef enum { AST_IDENT, AST_INT, AST_BINOP } AstType;
+typedef enum { AST_IDENT, AST_INT, AST_BINOP, AST_STR } AstType;
 
 typedef struct Ast {
   AstType type;
   union {
     i32 value;
+    struct {
+    char *value;
+      usize length;
+    } string_literal;
     struct {
       char *name;
       usize length;
@@ -23,6 +27,7 @@ typedef struct Ast {
 Ast *new_bin_op_ast(Ast *left, Ast *right, char op);
 Ast *new_int_ast(i32 value);
 Ast *new_ident_ast(const char *name, usize lenght);
+Ast *new_string_ast(const char *name, usize length);
 
 typedef enum {
   STMT_VAR,    // var x = expr;

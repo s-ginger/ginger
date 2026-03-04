@@ -5,7 +5,9 @@
 typedef enum {
 
   TOK_IDENT,
-  TOK_INT, // 12
+  TOK_INT,    // 12
+  TOK_FLOAT,  // 12.12
+  TOK_STRING, // "Hello world"
 
   TOK_PLUS,   // +
   TOK_MINUS,  // -
@@ -33,7 +35,8 @@ typedef enum {
 
   TOK_NEWLINE,
   TOK_EOF,
-  TOK_UNKNOWN
+  TOK_UNKNOWN,
+  TOK_ILLEGAL
 
 } TokenType;
 

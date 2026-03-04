@@ -8,4 +8,4 @@ stmt → ID '=' expr           ; присваивание
 
 expr   → term ((+ | -) term)*
 term   → factor ((* | /) factor)*
-factor → NUMBER | '(' expr ')' | ID
+factor → NUMBER | '(' expr ')' | ID | FLOAT | STRING  | CHAR

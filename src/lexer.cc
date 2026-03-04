@@ -35,6 +35,21 @@ Token lexer_next(Lexer *l) {
     return new_token(TOK_EOF, l->src + start, 0); // длина 0 для EOF
   }
 
+  if (c == '\"') {
+    while (lexer_peek(l) != '\0') {
+      char ch = lexer_advance(l);
+      if (ch == '\\') {
+        lexer_advance(l);
+      } // пропускаем экранированный символ
+      else if (ch == '\"') {
+        usize len = l->pos - start;
+        return new_token(TOK_STRING, l->src + start, len);
+      }
+    }
+    usize len = l->pos - start;
+    return new_token(TOK_ILLEGAL, l->src + start, len);
+  }
+
   if (is_digit(c)) {
     while (is_digit(lexer_peek(l)))
       lexer_advance(l);
