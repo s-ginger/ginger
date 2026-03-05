@@ -163,6 +163,21 @@ static Stmt *parse_package(Parser *p) {
   return new_package_stmt(name, len);
 }
 
+static Stmt *parse_import(Parser *p) {
+  parser_advance(p);
+
+  if (p->current.type != TOK_STRING) {
+    return NULL; // Ошибка: после package должно быть имя
+  }
+
+  const char *name = p->current.start;
+  usize len = p->current.length;
+
+  parser_advance(p);
+
+  return new_import_stmt(name, len);
+}
+
 Stmt *parse_stmt(Parser *p) {
   Stmt *stmt = NULL;
 
@@ -177,6 +192,8 @@ Stmt *parse_stmt(Parser *p) {
       stmt = new_expr_stmt(parse_expr(p));
   } else if (p->current.type == TOK_PACKAGE) {
     stmt = parse_package(p);
+  } else if (p->current.type == TOK_IMPORT) {
+    stmt = parse_import(p);
   } else {
     stmt = new_expr_stmt(parse_expr(p));
   }

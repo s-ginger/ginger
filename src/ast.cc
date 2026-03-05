@@ -51,19 +51,18 @@ Ast *new_string_ast(const char *name, usize length) {
     return NULL;
 
   node->type = AST_STR;
-  node->string_literal.value = cast<char *>(malloc(length + 1)); // выделяем память
+  node->string_literal.value =
+      cast<char *>(malloc(length + 1)); // выделяем память
   if (!node->string_literal.value) {
     free(node);
     return NULL;
   }
 
   memcpy(node->string_literal.value, name, length); // копируем содержимое
-  node->string_literal.value[length] = '\0';        // добавляем нулевой терминатор
+  node->string_literal.value[length] = '\0'; // добавляем нулевой терминатор
   node->string_literal.length = length;
   return node;
 }
-
-
 
 void free_ast(Ast *ast) {
   if (!ast)
@@ -110,6 +109,14 @@ Stmt *new_package_stmt(const char *name, usize len) {
   stmt->type = STMT_PACKAGE;
   stmt->package_decl.name = name;
   stmt->package_decl.lenght = len;
+  return stmt;
+}
+
+Stmt *new_import_stmt(const char *name, usize len) {
+  Stmt *stmt = cast<Stmt *>(malloc(sizeof(Stmt)));
+  stmt->type = STMT_IMPORT;
+  stmt->import_decl.name = name;
+  stmt->import_decl.lenght = len;
   return stmt;
 }
 
@@ -186,7 +193,8 @@ void print_ast(Ast *ast, i32 indent) {
     break;
 
   case AST_STR:
-    printf("String(%.*s)\n", (i32)ast->string_literal.length, ast->string_literal.value);
+    printf("String(%.*s)\n", (i32)ast->string_literal.length,
+           ast->string_literal.value);
     break;
   case AST_IDENT:
     printf("Ident(%.*s)\n", (i32)ast->ident.length, ast->ident.name);
@@ -225,7 +233,13 @@ void print_stmt(Stmt *stmt, i32 indent) {
     break;
 
   case STMT_PACKAGE:
-    printf("Package(%.*s)\n", (i32)stmt->package_decl.lenght, stmt->package_decl.name);
+    printf("Package(%.*s)\n", (i32)stmt->package_decl.lenght,
+           stmt->package_decl.name);
+    break;
+
+  case STMT_IMPORT:
+    printf("Import(%.*s)\n", (i32)stmt->import_decl.lenght,
+           stmt->import_decl.name);
     break;
 
   case STMT_EXPR:

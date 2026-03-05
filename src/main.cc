@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 int main() {
-  Lexer l = {" a ", 0};
+  Lexer l = {"import \"core:fmt\" ", 0};
 
   Parser parser;
   parser_init(&parser, &l);

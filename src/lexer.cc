@@ -71,6 +71,9 @@ Token lexer_next(Lexer *l) {
     if (len == 5 && strncmp(text, "const", 5) == 0)
       return new_token(TOK_CONST, text, len);
 
+    if (len == 6 && strncmp(text, "import", 6) == 0)
+      return new_token(TOK_IMPORT, text, len);
+
     if (len == 7 && strncmp(text, "package", 7) == 0)
       return new_token(TOK_PACKAGE, text, len);
 

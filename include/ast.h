@@ -86,6 +86,7 @@ typedef struct Stmt {
 Stmt *new_var_stmt(const char *name, usize len, Ast *value);
 Stmt *new_const_stmt(const char *name, usize len, Ast *value);
 Stmt *new_package_stmt(const char *name, usize len);
+Stmt *new_import_stmt(const char *name, usize len);
 Stmt *new_assign_stmt(const char *name, usize len, Ast *value);
 Stmt *new_expr_stmt(Ast *expr);
 Stmt *new_block_stmt(Stmt **stmts, usize count);

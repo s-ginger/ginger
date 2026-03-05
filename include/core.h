@@ -3,13 +3,13 @@
 
 #include <utility>
 #if defined(__cplusplus)
-#include <cstdint> 
-#include <cstdlib>
+#include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #else
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #endif
@@ -47,6 +47,30 @@ template <typename T> constexpr usize count_of(T &arr) {
   return sizeof(arr) / sizeof(arr[0]);
 }
 
+// --- Allocator ---
+
+typedef struct Allocator {
+  void *user_data;
+
+  void *(*alloc)(struct Allocator *a, usize size);
+  void (*dealloc)(struct Allocator *a, void *ptr);
+  void (*reset)(struct Allocator *a);
+} Allocator;
+
+static inline void *alloc(Allocator *a, usize size) {
+  return a && a->alloc ? a->alloc(a, size) : NULL;
+}
+
+static inline void dealloc(Allocator *a, void *ptr) {
+  if (a && a->dealloc)
+    a->dealloc(a, ptr);
+}
+
+static inline void reset(Allocator *a) {
+  if (a && a->reset)
+    a->reset(a);
+}
+
 // --- Arena Storage ---
 
 struct Arena {
@@ -82,7 +106,8 @@ inline void *arena_alloc(Arena *arena, usize size) {
     }
 
     byte *new_buffer = cast<byte *>(realloc(arena->buffer, new_capacity));
-    if (!new_buffer) return nullptr;
+    if (!new_buffer)
+      return nullptr;
 
     arena->buffer = new_buffer;
     arena->capacity = new_capacity;
@@ -93,9 +118,7 @@ inline void *arena_alloc(Arena *arena, usize size) {
   return ptr;
 }
 
-inline void arena_reset(Arena *arena) { 
-  arena->offset = 0; 
-}
+inline void arena_reset(Arena *arena) { arena->offset = 0; }
 
 inline void arena_destroy(Arena *arena) {
   free(arena->buffer);
@@ -107,7 +130,7 @@ inline void arena_destroy(Arena *arena) {
 // --- Arena Temp/Snapshot ---
 
 inline ArenaTemp arena_temp_begin(Arena *arena) {
-  return { arena, arena->offset };
+  return {arena, arena->offset};
 }
 
 inline void arena_temp_end(ArenaTemp temp) {
@@ -116,14 +139,15 @@ inline void arena_temp_end(ArenaTemp temp) {
 
 // --- Helpers & Stats ---
 
-inline void arena_print_stats(Arena* arena) {
-    f32 used_kb = cast<f32>(arena->offset) / 1024.0f;
-    f32 cap_kb = cast<f32>(arena->capacity) / 1024.0f;
-    printf("Arena usage: %.2f / %.2f KB (%.1f%%)\n", 
-            used_kb, cap_kb, (used_kb / cap_kb) * 100.0f);
+inline void arena_print_stats(Arena *arena) {
+  f32 used_kb = cast<f32>(arena->offset) / 1024.0f;
+  f32 cap_kb = cast<f32>(arena->capacity) / 1024.0f;
+  printf("Arena usage: %.2f / %.2f KB (%.1f%%)\n", used_kb, cap_kb,
+         (used_kb / cap_kb) * 100.0f);
 }
 
-#define push_struct(arena, type) cast<type*>(arena_alloc(arena, sizeof(type)))
-#define push_array(arena, type, count) cast<type*>(arena_alloc(arena, sizeof(type) * (count)))
+#define push_struct(arena, type) cast<type *>(arena_alloc(arena, sizeof(type)))
+#define push_array(arena, type, count)                                         \
+  cast<type *>(arena_alloc(arena, sizeof(type) * (count)))
 
 #endif
