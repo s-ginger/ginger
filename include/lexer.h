@@ -6,6 +6,8 @@
 typedef struct Lexer {
   const char *src;
   i32 pos;
+  usize line;
+  usize column;
 } Lexer;
 
 char lexer_advance(Lexer *l);

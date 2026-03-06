@@ -44,8 +44,9 @@ typedef struct Token {
   TokenType type;
   const char *start;
   usize length;
+  usize line;
+  usize column;
 } Token;
 
-Token new_token(TokenType type, const char *start, usize length);
-
+Token new_token_at(TokenType type, const char *start, usize len, usize line, usize column);
 #endif
