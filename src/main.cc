@@ -5,21 +5,18 @@
 #include <stdlib.h>
 
 int main() {
-  Lexer l = {"import \"core:fmt\" ", 0};
+    // Создаём арену для AST/Stmt
+    Arena *arena = arena_create(1024 * 1024); // 1 MB, можно больше
 
-  Parser parser;
-  parser_init(&parser, &l);
+    Lexer lexer = {"package main \n import \"base\" \n var a = 10 + 12 * 6 \n const p = 10", 0};
+    Parser parser;
 
-  Stmt *stmt = parse_stmt(&parser);
+    parser_init(&parser, &lexer, arena); // передаём арену в парсер
 
-  if (stmt) {
-    printf("AST is completed\n");
-    print_stmt(stmt, 0);
-  } else {
-    printf("Error.\n");
-  }
+    Stmt **program = parse_program(&parser);
 
-  free_stmt(stmt);
+    print_program(program);
 
-  return 0;
+    arena_destroy(arena); // освобождаем память в конце
+    return 0;
 }

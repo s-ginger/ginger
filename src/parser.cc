@@ -4,10 +4,11 @@
 #include "tokens.h"
 #include <stdlib.h>
 
-void parser_init(Parser *p, Lexer *lexer) {
+void parser_init(Parser *p, Lexer *lexer, Arena* arena) {
   p->lexer = lexer;
   p->current = lexer_next(lexer);
   p->next = lexer_next(lexer);
+  p->arena = arena;
 }
 
 Token parser_advance(Parser *p) {
@@ -27,14 +28,14 @@ Ast *parse_factor(Parser *p) {
   }
 
   if (p->current.type == TOK_IDENT) {
-    Ast *ident_ast = new_ident_ast(p->current.start, p->current.length);
+    Ast *ident_ast = new_ident_ast(p->arena, p->current.start, p->current.length);
     parser_advance(p);
     return ident_ast;
   }
 
   if (p->current.type == TOK_STRING) {
     Ast *string_literal =
-        new_string_ast(p->current.start + 1, p->current.length - 2);
+        new_string_ast(p->arena, p->current.start + 1, p->current.length - 2);
     parser_advance(p);
     return string_literal;
   }
@@ -43,7 +44,7 @@ Ast *parse_factor(Parser *p) {
     return NULL; // ошибка
   }
 
-  Ast *node = new_int_ast(atoi(p->current.start));
+  Ast *node = new_int_ast(p->arena, atoi(p->current.start));
   parser_advance(p); // следующий токен
   return node;
 }
@@ -61,7 +62,7 @@ Ast *parse_term(Parser *p) {
     if (!right)
       return NULL;
 
-    left = new_bin_op_ast(left, right, op);
+    left = new_bin_op_ast(p->arena, left, right, op);
   }
 
   return left;
@@ -80,7 +81,7 @@ Ast *parse_expr(Parser *p) {
     if (!right)
       return NULL; // ошибка синтаксиса
 
-    left = new_bin_op_ast(left, right, op);
+    left = new_bin_op_ast(p->arena, left, right, op);
   }
 
   return left;
@@ -105,7 +106,7 @@ static Stmt *parse_var_stmt(Parser *p) {
       return NULL;
   }
 
-  return new_var_stmt(name, len, value);
+  return new_var_stmt(p->arena, name, len, value);
 }
 
 static Stmt *parse_const_stmt(Parser *p) {
@@ -127,7 +128,7 @@ static Stmt *parse_const_stmt(Parser *p) {
       return NULL;
   }
 
-  return new_const_stmt(name, len, value);
+  return new_const_stmt(p->arena, name, len, value);
 }
 
 static Stmt *parse_assign(Parser *p) {
@@ -140,7 +141,7 @@ static Stmt *parse_assign(Parser *p) {
 
   Ast *expr = parse_expr(p);
 
-  return new_assign_stmt(ident->ident.name, ident->ident.length, expr);
+  return new_assign_stmt(p->arena,ident->ident.name, ident->ident.length, expr);
 }
 
 static Stmt *parse_package(Parser *p) {
@@ -160,7 +161,7 @@ static Stmt *parse_package(Parser *p) {
   parser_advance(p);
 
   // 5. Создаем стейтмент (не забудь про передачу Арены в new_...)
-  return new_package_stmt(name, len);
+  return new_package_stmt(p->arena,name, len);
 }
 
 static Stmt *parse_import(Parser *p) {
@@ -175,7 +176,7 @@ static Stmt *parse_import(Parser *p) {
 
   parser_advance(p);
 
-  return new_import_stmt(name, len);
+  return new_import_stmt(p->arena,name, len);
 }
 
 Stmt *parse_stmt(Parser *p) {
@@ -189,13 +190,13 @@ Stmt *parse_stmt(Parser *p) {
     if (p->next.type == TOK_ASSIGN)
       stmt = parse_assign(p);
     else
-      stmt = new_expr_stmt(parse_expr(p));
+      stmt = new_expr_stmt(p->arena,parse_expr(p));
   } else if (p->current.type == TOK_PACKAGE) {
     stmt = parse_package(p);
   } else if (p->current.type == TOK_IMPORT) {
     stmt = parse_import(p);
   } else {
-    stmt = new_expr_stmt(parse_expr(p));
+    stmt = new_expr_stmt(p->arena,parse_expr(p));
   }
 
   if (!stmt)
@@ -209,4 +210,28 @@ Stmt *parse_stmt(Parser *p) {
   return stmt;
 }
 
-Stmt **parse_program(Parser *p) { return nullptr; }
+Stmt **parse_program(Parser *p) {
+    usize capacity = 16;
+    usize count = 0;
+
+    Stmt **stmts = cast<Stmt**>(malloc(sizeof(Stmt*) * capacity));
+
+    while (p->current.type != TOK_EOF) {
+        Stmt *stmt = parse_stmt(p);
+        if (!stmt) {
+            free(stmts);
+            return NULL;
+        }
+
+        if (count >= capacity) {
+            capacity *= 2;
+            stmts = cast<Stmt**>(realloc(stmts, sizeof(Stmt*) * capacity));
+        }
+
+        stmts[count++] = stmt;
+    }
+
+    stmts[count] = NULL; // sentinel
+
+    return stmts;
+}

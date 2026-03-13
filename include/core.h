@@ -2,17 +2,11 @@
 #define CORE_H
 
 #include <utility>
-#if defined(__cplusplus)
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#else
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#endif
+
 
 typedef int8_t i8;
 typedef uint8_t u8;
@@ -47,35 +41,23 @@ template <typename T> constexpr usize count_of(T &arr) {
   return sizeof(arr) / sizeof(arr[0]);
 }
 
-// --- Allocator ---
-
-typedef struct Allocator {
-  void *user_data;
-
-  void *(*alloc)(struct Allocator *a, usize size);
-  void (*dealloc)(struct Allocator *a, void *ptr);
-  void (*reset)(struct Allocator *a);
-} Allocator;
-
-static inline void *alloc(Allocator *a, usize size) {
-  return a && a->alloc ? a->alloc(a, size) : NULL;
+template <typename F>
+struct Defer {
+    F f;
+    Defer(F&& f) : f(std::forward<F>(f)) {}
+    ~Defer() { f(); }
+};
+static const struct DeferHelper {} defer_helper_inst;
+template <typename F> 
+inline Defer<F> operator+(DeferHelper, F &&f) {
+    return Defer<F>(std::forward<F>(f));
 }
-
-static inline void dealloc(Allocator *a, void *ptr) {
-  if (a && a->dealloc)
-    a->dealloc(a, ptr);
-}
-
-static inline void reset(Allocator *a) {
-  if (a && a->reset)
-    a->reset(a);
-}
+#define defer const auto defer_##__COUNTER__ = defer_helper_inst + [&]()
 
 // --- Context ---
 
 typedef struct Context {
   void *data;
-  Allocator *allocator;
 } Context;
 
 
